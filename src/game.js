@@ -9,8 +9,14 @@ class Game extends Phaser.Scene {
         this.load.image("tomato", "assets/sprites/tomato.png");
         this.load.image("fondo", "assets/sprites/fondo.png");
         this.load.image("sign", "assets/sprites/sign.png");
+        this.load.audio("pizzaSong", "assets/music/pizzaSong.mp3");
     }
     create() {
+        let music = this.scene.scene.sound.add("pizzaSong", {
+            loop: true,
+            volume: 0.1,
+        });
+        music.play();
         this.levelInfo = {
             pepCount: 1,
             cheeseCount: 0,
@@ -31,9 +37,11 @@ class Game extends Phaser.Scene {
             loop: true,
             callback: () => {
                 this.secLeft -= 1;
+                console.log("time");
                 this.timerText.setText(`Tiempo restante: ${this.secLeft}`);
                 if (this.secLeft <= 0) {
                     console.log("End");
+                    music.stop();
                     this.scene.start("GameOver", { score: this.score });
                 }
             },
@@ -44,7 +52,8 @@ class Game extends Phaser.Scene {
         this.input.keyboard.on(
             "keydown-SPACE",
             function () {
-                this.onCompleteLevel();
+                music.stop();
+                this.scene.start("GameOver", { score: this.score });
             },
             this
         );
